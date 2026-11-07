@@ -1,0 +1,115 @@
+import axios from 'axios';
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+const api = axios.create({
+  baseURL: `${API_BASE_URL}/api`,
+  headers: { 'Content-Type': 'application/json' }
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const authAPI = {
+  register: (data: { name: string; email: string; password: string }) => api.post('/auth/register', data),
+  login: (data: { email: string; password: string }) => api.post('/auth/login', data),
+  getMe: () => api.get('/auth/me'),
+  updateProfile: (data: FormData) => api.put('/auth/profile', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  changePassword: (data: { currentPassword: string; newPassword: string }) => api.put('/auth/change-password', data),
+};
+
+export const taskAPI = {
+  getAll: (params?: Record<string, string>) => api.get('/tasks', { params }),
+  getById: (id: string) => api.get(`/tasks/${id}`),
+  create: (data: FormData | Record<string, unknown>) => {
+    const isFormData = data instanceof FormData;
+    return api.post('/tasks', data, isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {});
+  },
+  update: (id: string, data: Partial<Record<string, unknown>>) => api.put(`/tasks/${id}`, data),
+  delete: (id: string) => api.delete(`/tasks/${id}`),
+  toggle: (id: string) => api.patch(`/tasks/${id}/toggle`),
+  getCalendar: (params: { year: number; month: number }) => api.get('/tasks/calendar', { params }),
+  updateSubtask: (taskId: string, subtaskId: string, data: Record<string, unknown>) =>
+    api.patch(`/tasks/${taskId}/subtasks/${subtaskId}`, data),
+};
+
+export const aiAPI = {
+  suggestPriority: () => api.post('/ai/suggest-priority'),
+  autoSchedule: (data: { date?: string; workingHours?: { start: string; end: string } }) => api.post('/ai/auto-schedule', data),
+  productivityAnalysis: (days?: number) => api.get('/ai/productivity-analysis', { params: { days } }),
+  chat: (data: { message: string; history?: { role: string; content: string }[] }) => api.post('/ai/chat', data),
+  createTask: (text: string) => api.post('/ai/create-task', { text }),
+  smartReminders: () => api.get('/ai/smart-reminders'),
+};
+
+export const notificationAPI = {
+  getAll: () => api.get('/notifications'),
+  markRead: () => api.patch('/notifications/mark-read'),
+  delete: (id: string) => api.delete(`/notifications/${id}`),
+};
+
+export const statsAPI = {
+  getUserStats: () => api.get('/stats'),
+};
+
+export const adminAPI = {
+  getUsers: (params?: Record<string, string>) => api.get('/admin/users', { params }),
+  toggleUser: (id: string) => api.patch(`/admin/users/${id}/toggle`),
+  getStats: () => api.get('/admin/stats'),
+};
+
+export const teamAPI = {
+  getAll: () => api.get('/teams'),
+  create: (data: Record<string, unknown>) => api.post('/teams', data),
+  getById: (id: string) => api.get(`/teams/${id}`),
+  update: (id: string, data: Record<string, unknown>) => api.patch(`/teams/${id}`, data),
+  delete: (id: string) => api.delete(`/teams/${id}`),
+
+  invite: (id: string, email: string, role: string) =>
+    api.post(`/teams/${id}/invite`, { email, role }),
+  cancelInvite: (id: string, inviteId: string) =>
+    api.delete(`/teams/${id}/invites/${inviteId}`),
+
+  acceptInvite: (teamId: string, inviteId: string) =>
+    api.post(`/teams/${teamId}/invites/${inviteId}/accept`),
+  declineInvite: (teamId: string, inviteId: string) =>
+    api.post(`/teams/${teamId}/invites/${inviteId}/decline`),
+
+  getMyInvites: () => api.get('/teams/me/invites'),
+
+  updateMemberRole: (id: string, memberId: string, role: string) =>
+    api.patch(`/teams/${id}/members/${memberId}/role`, { role }),
+  removeMember: (id: string, memberId: string) =>
+    api.delete(`/teams/${id}/members/${memberId}`),
+
+  getTasks: (id: string, params?: Record<string, string>) =>
+    api.get(`/teams/${id}/tasks`, { params }),
+  createTask: (id: string, data: Record<string, unknown>) =>
+    api.post(`/teams/${id}/tasks`, data),
+  createTaskWithAI: (id: string, data: { text: string; assignee?: string | null }) =>
+    api.post(`/teams/${id}/tasks/ai`, data),
+  updateTask: (teamId: string, taskId: string, data: Record<string, unknown>) =>
+    api.patch(`/teams/${teamId}/tasks/${taskId}`, data),
+  deleteTask: (teamId: string, taskId: string) =>
+    api.delete(`/teams/${teamId}/tasks/${taskId}`),
+  getActivities: (id: string) =>
+    api.get(`/teams/${id}/activities`),
+};
+
+export default api;

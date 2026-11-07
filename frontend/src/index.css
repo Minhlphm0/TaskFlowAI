@@ -1,0 +1,631 @@
+@import 'react-datepicker/dist/react-datepicker.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME VARIABLES
+========================= */
+
+:root {
+  /* LIGHT MODE - Xanh pastel */
+  --primary: #3b82f6;
+  --bg-primary: #e8f4fd;
+  --bg-secondary: #d1e9f7;
+  --bg-card: rgba(255,255,255,0.75);
+  --bg-elevated: rgba(209,233,247,0.8);
+  --border: rgba(59,130,246,0.2);
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #64748b;
+}
+
+.dark {
+  /* DARK MODE */
+  --primary: #4f46e5;
+  --bg-primary: #0a0f1e;
+  --bg-secondary: #0d1526;
+  --bg-card: #111827;
+  --bg-elevated: #1a2236;
+  --border: rgba(255,255,255,0.07);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+}
+
+/* =========================
+   BASE
+========================= */
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Sora', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(34,211,238,0.015), transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.02), transparent 50%);
+}
+
+/* =========================
+   LIGHT MODE TEXT FIX
+========================= */
+
+:root:not(.dark) .text-white,
+:root:not(.dark) .text-slate-50,
+:root:not(.dark) .text-slate-100,
+:root:not(.dark) .text-slate-200,
+:root:not(.dark) .text-slate-300 {
+  color: #111827 !important;
+}
+
+:root:not(.dark) .text-slate-400,
+:root:not(.dark) .text-slate-500,
+:root:not(.dark) .text-slate-600 {
+  color: #4b5563 !important;
+}
+
+:root:not(.dark) .placeholder-slate-400::placeholder,
+:root:not(.dark) .placeholder-slate-500::placeholder,
+:root:not(.dark) input::placeholder,
+:root:not(.dark) textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+
+:root:not(.dark) input,
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+  color: #111827;
+}
+
+:root:not(.dark) label,
+:root:not(.dark) h1,
+:root:not(.dark) h2,
+:root:not(.dark) h3,
+:root:not(.dark) h4,
+:root:not(.dark) h5,
+:root:not(.dark) h6,
+:root:not(.dark) p,
+:root:not(.dark) span {
+  color: inherit;
+}
+
+/* Không đổi chữ trắng trong nút màu gradient */
+:root:not(.dark) .btn-primary,
+:root:not(.dark) button.bg-gradient-to-r,
+:root:not(.dark) .bg-gradient-to-r.text-white,
+:root:not(.dark) .bg-cyan-500,
+:root:not(.dark) .bg-blue-500,
+:root:not(.dark) .bg-violet-500,
+:root:not(.dark) .bg-rose-500,
+:root:not(.dark) .bg-emerald-500 {
+  color: #ffffff !important;
+}
+
+:root:not(.dark) .btn-primary *,
+:root:not(.dark) button.bg-gradient-to-r *,
+:root:not(.dark) .bg-gradient-to-r.text-white * {
+  color: #ffffff !important;
+}
+
+/* =========================
+   FIX BROWSER AUTOFILL
+========================= */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-elevated) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* =========================
+   GLASS UI
+========================= */
+
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-hover:hover {
+  background: var(--bg-elevated);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================
+   GLOW
+========================= */
+
+.glow-cyan { box-shadow: 0 0 20px rgba(34,211,238,0.15); }
+.glow-violet { box-shadow: 0 0 20px rgba(139,92,246,0.15); }
+
+/* =========================
+   BADGES
+========================= */
+
+.badge-high { background: rgba(244,63,94,0.25); color: #ff6b7a; border: 1px solid rgba(244,63,94,0.4); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; box-shadow: 0 0 12px rgba(244,63,94,0.15); }
+.badge-medium { background: rgba(245,158,11,0.25); color: #fcd34d; border: 1px solid rgba(245,158,11,0.4); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; box-shadow: 0 0 12px rgba(245,158,11,0.15); }
+.badge-low { background: rgba(16,185,129,0.25); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; box-shadow: 0 0 12px rgba(16,185,129,0.15); }
+
+.badge-pending { background: rgba(100,116,139,0.2); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.3); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+.badge-in-progress { background: rgba(59,130,246,0.25); color: #7dd3fc; border: 1px solid rgba(59,130,246,0.4); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; box-shadow: 0 0 12px rgba(59,130,246,0.15); }
+.badge-completed { background: rgba(16,185,129,0.25); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; box-shadow: 0 0 12px rgba(16,185,129,0.15); }
+.badge-cancelled { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+
+/* =========================
+   INPUT
+========================= */
+
+.input-dark {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.input-dark::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+.input-dark:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+  background: linear-gradient(
+    to right,
+    var(--primary),
+    color-mix(in srgb, var(--primary), white 20%)
+  );
+}
+
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-ghost {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(244,63,94,0.2);
+  color: #f43f5e;
+  border: 1px solid rgba(244,63,94,0.3);
+}
+
+/* =========================
+   SELECT
+========================= */
+
+select {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* =========================
+   DATEPICKER
+========================= */
+
+.react-datepicker {
+  background: var(--bg-card) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__header {
+  background: var(--bg-elevated) !important;
+  border-color: var(--border) !important;
+}
+
+.react-datepicker__day { color: var(--text-primary) !important; }
+
+.react-datepicker__day:hover {
+  background: var(--bg-secondary) !important;
+}
+
+.react-datepicker__day--selected {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: var(--text-primary) !important;
+}
+
+/* =========================
+   SIDEBAR FINAL TEXT FIX
+   Fix TaskFlow, user name, email, logout
+========================= */
+
+.sidebar,
+.sidebar * {
+  color: #a1aec1 !important;
+}
+
+.sidebar a,
+.sidebar a *,
+.sidebar button,
+.sidebar button * {
+  color: #a1aec1 !important;
+  opacity: 1 !important;
+}
+
+/* Brand - TaskFlow text */
+.sidebar p.font-bold,
+.sidebar p.font-bold * {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+/* AI Powered */
+.sidebar [style*="--primary"] {
+  color: var(--primary) !important;
+  font-weight: 600;
+}
+
+/* Active menu - higher contrast */
+.sidebar a[aria-current='page'],
+.sidebar a[aria-current='page'] * {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* User name */
+.sidebar .text-slate-100,
+.sidebar .text-slate-200 {
+  color: #f1f5f9 !important;
+}
+
+/* User email */
+.sidebar .text-slate-300,
+.sidebar .text-slate-400,
+.sidebar .text-slate-500,
+.sidebar .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+/* Logout */
+.sidebar button:hover,
+.sidebar button:hover * {
+  color: #fda4af !important;
+}
+
+/* Avatar chữ cái bên trong vẫn trắng */
+.sidebar .rounded-full span,
+.sidebar .rounded-xl svg.text-white {
+  color: #ffffff !important;
+}
+
+/* =========================
+   DARK SURFACE TEXT FIX
+   Fix chữ trong các khối nền tối khi đang light mode
+========================= */
+
+:root:not(.dark) .bg-dark-900,
+:root:not(.dark) .bg-dark-800,
+:root:not(.dark) .bg-dark-700,
+:root:not(.dark) .bg-dark-600,
+:root:not(.dark) .bg-dark-500,
+:root:not(.dark) .bg-slate-900,
+:root:not(.dark) .bg-slate-800,
+:root:not(.dark) .bg-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+:root:not(.dark) .bg-dark-900 *,
+:root:not(.dark) .bg-dark-800 *,
+:root:not(.dark) .bg-dark-700 *,
+:root:not(.dark) .bg-dark-600 *,
+:root:not(.dark) .bg-dark-500 *,
+:root:not(.dark) .bg-slate-900 *,
+:root:not(.dark) .bg-slate-800 *,
+:root:not(.dark) .bg-slate-700 * {
+  color: #e2e8f0 !important;
+}
+
+/* Tab active hoặc message bot nền tối */
+:root:not(.dark) .bg-dark-700 .text-white,
+:root:not(.dark) .bg-dark-600 .text-white,
+:root:not(.dark) .bg-dark-500 .text-white {
+  color: #ffffff !important;
+}
+
+/* Icon/label phụ trong khối tối */
+:root:not(.dark) .bg-dark-700 .text-slate-400,
+:root:not(.dark) .bg-dark-600 .text-slate-400,
+:root:not(.dark) .bg-dark-500 .text-slate-400,
+:root:not(.dark) .bg-dark-700 .text-slate-500,
+:root:not(.dark) .bg-dark-600 .text-slate-500,
+:root:not(.dark) .bg-dark-500 .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+/* =========================
+   DATEPICKER TIME FINAL
+========================= */
+
+.react-datepicker__header--time,
+.react-datepicker-time__header,
+.react-datepicker__time-name {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+.react-datepicker__time-container {
+  background: var(--bg-card) !important;
+  border-left: 1px solid var(--border) !important;
+}
+
+.react-datepicker__time-list {
+  background: var(--bg-card) !important;
+}
+
+.react-datepicker__time-list-item {
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__time-list-item:hover {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__time-list-item--selected {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+/* =========================
+   FIX CHROME AUTOFILL
+========================= */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e2e8f0 !important;
+  caret-color: #e2e8f0 !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  background-color: transparent !important;
+  background-clip: content-box !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+}
+
+/* Text selection inside inputs */
+input::selection,
+textarea::selection {
+  background: rgba(34, 211, 238, 0.28);
+  color: #f8fafc;
+}
+
+/* Firefox autofill */
+input:autofill,
+textarea:autofill,
+select:autofill {
+  background-color: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: '|';
+  animation: blink 0.8s infinite;
+  margin-left: 2px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease both;
+}
+
+/* =========================
+   MOBILE OPTIMIZATIONS
+========================= */
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    overflow-x: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Prevent zoom on input focus on iOS */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* Better tap targets */
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Mobile-friendly modal */
+  .fixed.inset-0 {
+    padding: 12px;
+  }
+
+  /* Reduce padding on small screens — CSS thuần thay @apply */
+  .p-4  { padding: 0.75rem; }
+  .p-5  { padding: 0.75rem; }
+  .p-6  { padding: 1rem; }
+  .px-4 { padding-left: 0.75rem; padding-right: 0.75rem; }
+  .px-6 { padding-left: 1rem;    padding-right: 1rem; }
+  .py-4 { padding-top: 0.75rem;  padding-bottom: 0.75rem; }
+
+  /* Reduce gap on small screens */
+  .gap-4 { gap: 0.75rem; }
+  .gap-5 { gap: 1rem; }
+  .gap-6 { gap: 1rem; }
+
+  /* Space between sections */
+  .space-y-4 > * + * { margin-top: 0.75rem; }
+  .space-y-5 > * + * { margin-top: 1rem; }
+  .space-y-6 > * + * { margin-top: 1rem; }
+
+  /* Better scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Touch-friendly tap feedback */
+@media (hover: none) {
+  button:active { opacity: 0.85; }
+  a:active      { opacity: 0.85; }
+}
+
+/* Landscape mode optimizations */
+@media (max-height: 600px) and (orientation: landscape) {
+  body {
+    font-size: 13px;
+  }
+
+  main {
+    padding: 8px !important;
+  }
+
+  .space-y-4 > * + *,
+  .space-y-5 > * + *,
+  .space-y-6 > * + * {
+    margin-top: 8px !important;
+  }
+}
+
+/* Portrait orientation optimizations */
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  /* Stack 2-col grids to 1 col — CSS thuần thay @apply grid-cols-1 */
+  .grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  /* Stack flex rows — CSS thuần thay @apply flex-col */
+  .flex-row {
+    flex-direction: column !important;
+  }
+
+  /* Hide desktop-only content */
+  .hidden\@mobile {
+    display: none !important;
+  }
+
+  /* Fullscreen on mobile */
+  .md\:w-auto {
+    width: 100% !important;
+  }
+}
